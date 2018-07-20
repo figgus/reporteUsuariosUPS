@@ -1,0 +1,249 @@
+﻿@using Reporte_Log_Usuarios.Models;
+@{
+    ViewBag.Title = "Historial Usuarios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<Usuario_Models> usu = ViewBag.usua;
+    
+}
+@*
+    @Scripts.Render("~/bundles/jquery")
+*@
+@*<script type="text/javascript">
+        $(document).ready(
+            function () {
+                $("#btnActualizarNombresUsuario").click(function(){
+                    $.ajax( {
+                        url: "MasVida/Index",
+                        data: $("#formulario").serialize(),
+                        type: 'post',
+                        success: function (data) {
+                            var info = document.getElementById('datos');
+
+                        }
+                    });
+                });
+            }
+            );
+    </script>*@
+@*<script src="~/Scripts/js/jquery-1.11.1.js"></script>*@
+<link href="~/Scripts/js/jquery-datatables/media/css/jquery.dataTables.css" rel="stylesheet" />
+<script src="~/Scripts/js/jquery-datatables/media/js/jquery.dataTables.js"></script>
+<link href="~/Scripts/css/centrarTabla.css" rel="stylesheet" />
+@{
+    bool stat=false;
+    if(Session["UsuarioValidado"]==null){
+        stat = false;
+    }
+    else
+    {
+        stat = (bool)Session["UsuarioValidado"];
+    }
+    
+    try
+    {
+        //stat = (bool)Session["UsuarioValidado"];
+        if (!stat)
+        {
+            Response.Redirect("/Reporte/Login");
+
+        }
+    }catch(Exception ex){
+        //if (stat)
+        //{
+        //    Response.Redirect("/Reporte/Index");
+
+        //}
+        //else
+        //{
+        //    Response.Redirect("/Reporte/Login");
+        //}
+    }
+    }
+<script>
+    $(document).ready(function () {
+
+        $('#dataTable').DataTable({
+            language: {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ Registros",
+                "sZeroRecords": "&nbsp;",
+                "sEmptyTable": "&nbsp;",
+                "sInfo": "Encontrados: _TOTAL_ Registros (Mostrando del _START_ al _END_)",
+                "sInfoEmpty": "* No se han encontrado resultados en la búsqueda",
+                "sInfoFiltered": "",
+                "sInfoPostFix": "",
+                "sSearch": "Buscar:",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "Último",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            },
+            aoColumnDefs: [{ 'bSortable': false, 'aTargets': ['no-sortable'] }]
+        });
+
+        
+    });
+
+    function fnExcelReport() {
+        var tab_text = '<table border="1px" style="font-size:20px" ">';
+        var textRange;
+        var j = 0;
+        var tab = document.getElementById('dataTable'); // id of table
+        var lines = tab.rows.length;
+
+        // the first headline of the table
+        if (lines > 0) {
+            tab_text = tab_text + '<tr bgcolor="#DFDFDF">' + tab.rows[0].innerHTML + '</tr>';
+        }
+
+        // table data lines, loop starting from 1
+        for (j = 1 ; j < lines; j++) {
+            tab_text = tab_text + "<tr>" + tab.rows[j].innerHTML + "</tr>";
+        }
+
+        tab_text = tab_text + "</table>";
+        tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");             //remove if u want links in your table
+        tab_text = tab_text.replace(/<img[^>]*>/gi, "");                 // remove if u want images in your table
+        tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, "");    // reomves input params
+        // console.log(tab_text); // aktivate so see the result (press F12 in browser)
+
+        var ua = window.navigator.userAgent;
+        var msie = ua.indexOf("MSIE ");
+
+        // if Internet Explorer
+        if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+            txtArea1.document.open("txt/html", "replace");
+            txtArea1.document.write(tab_text);
+            txtArea1.document.close();
+            txtArea1.focus();
+            sa = txtArea1.document.execCommand("SaveAs", true, "DataTableExport.cvs");
+        }
+        else // other browser not tested on IE 11
+            sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+
+        return (sa);
+    }
+</script>
+
+<body class="contact-page">
+    <div id="ModalMap" class="wrap-body">
+        <section id="container">
+            <div class="wrap-container">
+                <div class="crumbs">
+                    <ul>
+                        <li><a href='@Url.Action("CerrarSession", "Reporte")'>Cerrar Sesion</a></li>
+                    </ul>
+                </div>
+                <div class="zerogrid">
+                    <div class="row">
+                        <h1 class="t-center" style="margin: 40px 0;color: #212121;letter-spacing: 2px;font-weight: 500;">Historial Usuarios</h1>
+
+                        <h3>Seleccione las fechas entre las que quiere ver su reporte</h3>
+                        <br>
+                        <div class="col-full">
+                            <form id="formulario" method="post" action="@Url.Action("Index", "Reporte")">
+                                <div>
+                                    <center>
+                                        <div>
+                                            <h6>
+                                                Desde:
+                                                <input style="font-size: 18px;" type="date" name="fechaInicio" id="fechaInicio" required>
+
+                                                Hasta:
+                                                <input style="font-size: 18px;" type="date" name="fechaTermino" id="fechaTermino" required>
+                                                <input class="sendButton" style="cursor: pointer; background-color: #0AAC8E; width: auto; padding: 8px 8px; color: #ffffff;" type="submit" value="Actualizar" id="btnActualizarNombresUsuario">
+                                            </h6>
+                                        </div>
+                                    </center>
+                                </div>
+
+                            </form>
+                        </div>
+                        <div class="col-full">
+                            <div class="table-responsive">
+                                <div class="wrap-col">
+                                    <br>
+                                    <table id="dataTable" class="display" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Usuario</th>
+                                                <th>Nombre</th>
+                                                <th>Rut</th>
+                                                <th>Actividad</th>
+                                                <th>Email</th>
+                                                <th>Bloqueado</th>
+                                                <th>Fecha</th>
+                                                <th>Hora</th>
+                                                <th>Detalle</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{
+                                                try
+                                                {
+
+                                                    for (int i = 0; i < usu.Count; i++)
+                                                    {
+                                                        string estado;
+                                                        if(usu[i].Bloqueado==0){
+                                                            estado = "Activo";
+                                                        }
+                                                        else
+                                                        {
+                                                            estado = "Deshabilitado";
+                                                        }
+                                                        <tr>
+                                                            <td>@usu[i].Usuario</td>
+                                                            <td>@usu[i].Nombre</td>
+                                                            <td>@usu[i].Rut</td>
+                                                            <td>@usu[i].Activity</td>
+                                                            <th>@usu[i].eMail</th>
+                                                            <th>@estado</th>
+                                                            <td>@DateTime.Parse(usu[i].Date_Time.ToString()).ToShortDateString()</td>
+                                                            <td>@DateTime.Parse(usu[i].Date_Time.ToString()).ToLongTimeString()</td>
+                                                            <td>@usu[i].detalle</td>
+                                                        </tr>
+                                                
+                                                    }
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    
+                                                }
+
+}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        @{
+                            try { 
+                                Reporte_Log_Usuarios.Models.Clases.Archivo archivo = new Reporte_Log_Usuarios.Models.Clases.Archivo();
+                                archivo.guardarExcel(Server.MapPath("~/Content/Archivos/tabla.xls"), usu);
+                            }catch(Exception ex){
+                                
+                            }
+                        }
+                        <br>
+                        <a href="javascript:fnExcelReport();" class="descarga"><img src="~/Content/images/excel.png" /> &nbsp; DESCARGAR ARCHIVO PARA EXCEL</a>
+                        <br/>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+
+
+

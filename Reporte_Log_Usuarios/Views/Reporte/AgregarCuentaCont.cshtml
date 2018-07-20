@@ -1,0 +1,132 @@
+﻿@{
+    ViewBag.Title = "AgregarCuentaCont";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script type="text/javascript">
+    $(document).ready(
+        function () {
+            $('#msj').hide();
+            $('#alert').hide();
+            $('#btnGuardar').click(function () {
+                $.ajax({
+                    data: $('#formulario').serialize(),
+                    url: "@Url.Action("Insertar", "Reporte")",
+                    type: "post",
+                    success: function (response) {
+                        //alert(response);
+                        if (response === 'true') {
+                            $("#msj").show(2000).delay(2000).fadeOut(2000);
+                            setTimeout(function () { $(location).attr('href', '@Url.Action("RelacionProveedor", "Reporte")'); }, 4000);
+
+                        }
+                        else {
+                            $("#alert").show(2000).delay(2000).fadeOut(2000);
+                        }
+                    }
+                });
+            });
+        }
+    );
+</script>
+
+<body class="contact-page">
+    <div id="ModalMap" class="wrap-body">
+        <section id="container">
+            <div class="wrap-container">
+                <div class="crumbs">
+                    <ul></ul>
+                </div>
+                <div class="zerogrid">
+                    <div class="row">
+                        <h1 class="t-center" style="margin: 40px 0;color: #212121;letter-spacing: 2px;font-weight: 500;">Nuevo Registro</h1>
+                        <div class="col-full">
+                            <div class="table-responsive">
+                                <div class="wrap-col">
+                                    <div id="msj" align="center" name="msj" class="alert alert-success">
+                                        Datos Guardatos con exito
+                                    </div>
+                                    <div id="alert" align="center" name="alert" class="alert alert-danger">
+                                        No se pudo insertar los datos
+                                    </div>
+                                    <center>
+                                        <form id="formulario">
+                                            <input type="hidden" name="bd" id="bd" value="CuentasContables" />
+                                            <table>
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+
+                                                    <td>Cuenta Contable Softland</td>
+                                                    <td><input class="form-control" type="text" id="CueConSof" name="CueConSof" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        Cuenta Contable UPS
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control" type="text" id="CueConUPS" name="CueConUPS" />
+                                                    </td>
+                                                </tr>
+                                               
+                                               
+                                                <tr>
+                                                    <td></td>
+                                                    <td><input type="button" class="btn btn-primary" id="btnGuardar" name="btnGuardar" value="Guardar" /></td>
+                                                </tr>
+                                            </table>
+                                        </form>
+                                    </center>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+
+
+<script type="text/javascript">
+    var inp = document.getElementById('CueConSof');
+    //alert(inp);
+    inp.addEventListener("keydown", function () {
+        $('input#CueConSof').autocomplete(
+        {
+            minLength: 2,
+            select: function (event, ui) {
+                inp.value = ui.item.value;
+                return false;
+            },
+            search: function (event, ui) {
+                var parametros = $("#formulario").serialize();
+                var urlBuscar;
+                $.ajax({
+                    data: parametros,
+                    url: '@Url.Action("Autocompletar", "Mantenedor")',
+                    type: "post",
+                    success: function (response) {
+                        urlBuscar = response;
+                        //alert(response);
+                    },
+                    async: false
+                });
+                //alert(urlBuscar);
+                jQuery.ui.autocomplete.prototype._resizeMenu = function () {
+                    var ul = this.menu.element;
+                    ul.outerWidth(this.element.outerWidth());
+                }
+                $(this).autocomplete('option', 'source', urlBuscar);
+            },
+            html: true,
+            open: function (event, ui) {
+                $('.ui-autocomplete').css('z-index', 1000);
+            }
+        });
+    });
+</script>

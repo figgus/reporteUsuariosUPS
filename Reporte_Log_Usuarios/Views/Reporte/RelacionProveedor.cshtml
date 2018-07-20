@@ -1,0 +1,117 @@
+﻿@using Reporte_Log_Usuarios.Models;
+@{
+    ViewBag.Title = "RelacionProveedor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<RelProveedor_Model> rel = ViewBag.rel;
+
+}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="~/Scripts/js/jsMantenedores/jsDatatable.js"></script>
+<script type="text/javascript">
+    $(document).ready(
+        function () {
+            $("#msj").addClass("alert alert-success");
+            $("#alert").addClass("alert alert-danger");
+        }
+    );
+    function ConfirmarBorrar(id) {
+        var txt;
+        var r = confirm("Seguro que quiere borrar este registro");
+        if (r == true) {
+            var nombrePag=document.getElementById('bd');
+            var parametros = {'id' : id,'bd': nombrePag.value};
+            //alert(parametros);
+            $.ajax({
+                data: parametros,
+                url: "@Url.Action("Eliminar", "Mantenedor")",
+                type: "post",
+            success: function (response) {
+                //alert(response);
+                if (response === 'true') {
+                    $("#msj").show(2000).delay(2000).fadeOut(2000);
+                    $("#dataTable").load(location.href + " #dataTable>*", "");
+
+                }
+                else {
+                    $("#alert").show(2000).delay(2000).fadeOut(2000);
+                }
+            }
+        });
+    } else {
+            txt = "You pressed Cancel!";
+    }
+    }
+</script>
+<body class="contact-page">
+    <input type="hidden" id="bd" name="bd" value="RelProveedor" />
+    <div id="ModalMap" class="wrap-body">
+        <section id="container">
+            <div class="wrap-container">
+                <div class="crumbs">
+                    <ul></ul>
+                </div>
+                <div class="zerogrid">
+                    <div class="row">
+                        <h1 class="t-center" style="margin: 40px 0;color: #212121;letter-spacing: 2px;font-weight: 500;">Relacion Proveedor</h1>
+                        <div class="col-full">
+                            <div class="table-responsive">
+                                <div class="wrap-col">
+                                    <input type="hidden" value="CuentasContables" id="bd" name="bd">
+                                    <div id="msj" align="center" name="msj" >
+                                        Datos borrados con exito
+                                    </div>
+                                    <div id="alert" align="center" name="alert" >
+                                        No se pudo borrar el datos
+                                    </div>
+                                    <a href="@Url.Action("Agregar", "Reporte")" class="add icon_text"><img src="~/Content/images/toggle01.png" />Agregar Nuevo</a>
+                                    <table id="dataTable" class="display" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Código Proveedor Softland</th>
+                                                <th>Razón social</th>
+                                                <th>Codigo Proveedor UPS (SUPPLIER_NUM)</th>
+                                                <th>UPS Site ID (SUPPLIER_SITE_CODE)</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{
+                                                try
+                                                {
+
+                                                    for (int i = 0; i < rel.Count; i++)
+                                                    {
+                                                        <tr>
+                                                            <td>@rel[i].codProvS</td>
+                                                            <td>@rel[i].razonSocial</td>
+                                                            <td>@rel[i].codProvU</td>
+                                                            <td>@rel[i].siteId</td>
+                                                            <td>
+                                                                <a href="@Url.Action("EditarRelacionProv", "Mantenedor")?idRelProv=@rel[i].idRelProv&codProvS=@rel[i].codProvS &razonSocial=@rel[i].razonSocial&codProvU=@rel[i].codProvU&siteId=@rel[i].siteId" id="@i" title="Editar: 5-5300-5330-20-01"><img src="~/Content/images/edit.png" /></a>
+                                                                <a href="javascript:void(0)" onclick="ConfirmarBorrar(@rel[i].idRelProv)" id="@i" title="Eliminar: 5-5300-5330-20-01"><img src="~/Content/images/delete.png" /></a>
+                                                            </td>
+                                                        </tr>
+
+                                                    }
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    string error = ex.Message;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br>
+                        <a href="javascript:fnExcelReport();" class="descarga"><img src="~/Content/images/excel.png" /> &nbsp; DESCARGAR ARCHIVO PARA EXCEL</a>
+                        <br />
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>

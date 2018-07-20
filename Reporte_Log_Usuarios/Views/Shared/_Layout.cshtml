@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+@{
+    ViewBag.Title = "_Layout";
+}
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    @*@Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")*@
+    <title>Disofi</title>
+
+    @*css*@
+    <link rel="stylesheet" href="~/Scripts/css/zerogrid.css">
+    <link rel="stylesheet" href="~/Scripts/css/style.css">
+    <link rel="stylesheet" href="~/Scripts/css/lightbox.css">
+    <link rel="stylesheet" href="~/Scripts/css/menu.css">
+    <link href="~/Scripts/css/tirarFooterAbajo.css" rel="stylesheet" />
+    <link href="~/Scripts/css/autocomplete.css" rel="stylesheet" />
+    </head>
+    <body class="home-page">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="~/Scripts/js/script.js"></script>
+        <script src="~/Scripts/js/locationpicker.jquery.js"></script>
+        <script src="~/Scripts/jquery-ui-1.8.24.min.js"></script>
+        <link href="~/Scripts/js/jquery-datatables/media/css/jquery.dataTables.css" rel="stylesheet" />
+        <script src="~/Scripts/js/jquery-datatables/media/js/jquery.dataTables.js"></script>
+        <link href="~/Scripts/js/fancybox/source/jquery.fancybox.css" rel="stylesheet" />
+        <script src="~/Scripts/js/fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
+        <script src="~/Scripts/js/fancybox/source/jquery.fancybox.js"></script>
+        <script src="~/Scripts/js/fancybox/source/jquery.fancybox.pack.js"></script>
+
+        
+
+            <div class="wrap-body">
+                <div class="header">
+                    <div id='cssmenu'>
+
+                    </div>
+                </div>
+                <div id='cssmenu'>
+                    <ul>
+                        <li class="active"><a href=''><span>UPS</span></a></li>
+                        
+                            <li class=' has-sub'>
+                                <a href='#'><span>Mantenedores</span></a>
+                                <ul>
+                                    <li class='last'>
+                                        <a href='@Url.Action("RelacionProveedor", "Reporte")'><span>Relacion Proveedor</span></a>
+                                    </li>
+                                    <li class='last'>
+                                        <a href='@Url.Action("CuentasContables", "Reporte")'><span>Cuentas Contables</span></a>
+                                    </li>
+                                    <li class='last'>
+                                        <a href='@Url.Action("CentroCostos", "Reporte")'><span>Centro de Costos</span></a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class=' has-sub'>
+                                <a href='#'><span>Reportes</span></a>
+                                <ul>
+                                    <li class='last'>
+                                        <a href='@Url.Action("index", "Reporte")'><span>Historial Usuarios</span></a>
+                                    </li>
+                                </ul>
+                            </li>
+                           
+
+                        <li class="active" style="float:right"><a href=""><span>Cerrrar Sesion</span></a></li>
+                    </ul>
+                </div>
+
+                    @RenderBody()
+                    <footer>
+                        <div class="copyright">
+                            <div class="zerogrid wrapper">
+                                <p>&copy; @DateTime.Now.Year -Disofi</p>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+
+
+
+</body>
+
+

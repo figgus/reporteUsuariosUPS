@@ -1,0 +1,116 @@
+﻿@using Reporte_Log_Usuarios.Models;
+@{
+    ViewBag.Title = "CentroCostos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<CentroCostos_Model> centro = ViewBag.centro;
+
+}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="~/Scripts/js/jsMantenedores/jsDatatable.js"></script>
+<script type="text/javascript">
+    $(document).ready(
+        function () {
+            $("#msj").addClass("alert alert-success");
+            $("#alert").addClass("alert alert-danger");
+        }
+    );
+
+    function ConfirmarBorrar(id) {
+        var txt;
+        var r = confirm("Seguro que quiere borrar este registro");
+        if (r == true) {
+            var nombrePag=document.getElementById('bd');
+            var parametros = {'id' : id,'bd': nombrePag.value};
+            //alert(parametros);
+            $.ajax({
+                data: parametros,
+                url: "@Url.Action("Eliminar", "Mantenedor")",
+                type: "post",
+                success: function (response) {
+                    //alert(response);
+                    if (response === 'true') {
+                    $("#msj").show(2000).delay(2000).fadeOut(2000);
+                    $("#dataTable").load(location.href + " #dataTable>*", "");
+
+                    }
+                    else {
+                        $("#alert").show(2000).delay(2000).fadeOut(2000);
+                    }
+                }
+            });
+        } else {
+            txt = "You pressed Cancel!";
+        }
+    }
+</script>
+
+<body class="contact-page">
+    <div id="ModalMap" class="wrap-body">
+        <section id="container">
+            <div class="wrap-container">
+                <div class="crumbs">
+                    <ul></ul>
+                </div>
+                <div class="zerogrid">
+                    <div class="row">
+                        <h1 class="t-center" style="margin: 40px 0;color: #212121;letter-spacing: 2px;font-weight: 500;">Centros de Costos</h1>
+                        <div class="col-full">
+                            <div class="table-responsive">
+                                <div class="wrap-col">
+                                    <div id="msj" align="center" name="msj">
+                                        Datos eliminados con exito
+                                    </div>
+                                    <div id="alert" align="center" name="alert">
+                                        Error al eliminar
+                                    </div>
+                                    <input type="hidden" value="CentroCostos" id="bd" name="bd">
+                                    <a href="@Url.Action("AgregarCC", "Reporte")?bd=CuentasContables" class="add icon_text"><img src="~/Content/images/toggle01.png" />Agregar Nuevo</a>
+                                    <table id="dataTable" class="display" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Codigo de Centro Softland</th>
+                                                <th>Nombre Centro</th>
+                                                <th>Codigo de Centro UPS</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{
+                                                try
+                                                {
+
+                                                    for (int i = 0; i < centro.Count; i++)
+                                                    {
+                                                        <tr>
+                                                            <td>@centro[i].codCenSo</td>
+                                                            <td>@centro[i].nomCentro</td>
+                                                            <td>@centro[i].codCenUps</td>
+                                                            <td>
+                                                                <a href="@Url.Action("EditarCC", "Mantenedor")?idCentroCostos=@centro[i].idCentroCostos &codCenSo=@centro[i].codCenSo &nomCentro=@centro[i].nomCentro &codCenUps=@centro[i].codCenUps " id="@i" title="Editar: 5-5300-5330-20-01"><img src="~/Content/images/edit.png" /></a>
+                                                                <a href="javascript:void(0)" onclick="ConfirmarBorrar(@centro[i].idCentroCostos)" id="@i" title="Eliminar: 5-5300-5330-20-01"><img src="~/Content/images/delete.png" /></a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    string error = ex.Message;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <br>
+                        <a href="javascript:fnExcelReport();" class="descarga"><img src="~/Content/images/excel.png" /> &nbsp; DESCARGAR ARCHIVO PARA EXCEL</a>
+                        <br />
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+
